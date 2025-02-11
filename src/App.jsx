@@ -8,6 +8,7 @@ import Journal from "./pages/Journal";
 import Resources from "./pages/Resources";
 import FAQ from "./pages/FAQ";
 import Admin from "./pages/Admin";
+import PosterForm from "./pages/PosterForm";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/posters" element={<ResearchPosters />} />
+        <Route path="/PosterForm" element={<PosterForm />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/faq" element={<FAQ />} />

@@ -12,6 +12,7 @@ const NavBar = () => {
         ☰
       </button>
       <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
+        <li><Link to="/PosterForm">Posterform</Link></li>
         <li><Link to="/posters">Research Posters</Link></li>
         <li><Link to="/journal">Journal</Link></li>
         <li><Link to="/resources">Resources</Link></li>
