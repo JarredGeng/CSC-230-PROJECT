@@ -1,0 +1,207 @@
+ 
+
+ Benchmark 1 - Due 10:00am on February 18:  
+
+  
+
+High-Level Design / Summary  
+
+Detailed Design Document  
+
+Written Summary of Initial Technical Work  
+
+ IMPORTANT:  
+
+   High-Level Design:  
+
+What are the major logical components of your system?  
+
+Front End:  We are using React so far and have generated a proto website to get ideas of layout.  
+
+Backend: We are using Python through Flask we saw multiple different videos on how to communicate between with one another and with our data base. Also the main reason we chose it is we all relatively know python.  
+
+Database: SQL lite to run databases or the submissions and login information of different levels.  
+
+ 
+
+ 
+
+ 
+
+ 
+
+What is the role/purpose of each component of your system?  
+
+We are running React to generate the actual visual website page to be able to interact with regardless of users log in. We already made progress on this front and it seems the most reliable and have found videos for different functions.  
+
+Flask: The main reason we chose it as the back end is that it is used through Python. It also has some built-in features to help make the website faster and more reliable.  Right now we have the beginnings of a website that can be generated, it can have files be added onto it regardless of type which we can limit now to pdfs or dive into later for different areas of submission.  
+
+SQL: We are using it mostly due to ability to host our own databases in a small form to test everything we want to do. Whether or not we integrate the multiple password databases isn’t a priority right now however something we can do later.  
+
+ 
+
+ 
+
+What tools / technologies / programming languages are you using to  build each component  
+
+We are mostly using the python code with SQL lite to run the database options to allow us to test on a low scale with submitting files.  
+
+ 
+
+Which components of the system communicate/interact with each  other? (E.g., If you have a database, which components of the  system talk to the data)  
+
+We are going to use multiple databases for different aspects of the plan. We need to have a database containing all the posts that are going to be submitted. A database holding all the login credentials for different levels which also needs to be accessed for different permissions on the cite.  
+
+ 
+
+ 
+
+ Detailed Design Documents:  
+
+Multiple Levels of Login: “ We want to be able to have different permissions for different logins like administrator, editor, and guest”. We don’t necessarily know if it would be same home page with more widgets to edit information or completely different pages based on access level.  
+
+An About Page, with information of the department heads/ people who introduced us to this challenge. This will allow for those interested with questions on criminology side to ask the people who are going ahead with this. This should also  
+
+They want some sort of progress bar indicator on the process when the paper is submitted, goes to the editor in review process, is returned either for further edits or submitted to the board. I don’t necessarily know the direct path on this. We may make it a drop down for editors to select which option they are doing and be able to notify the process to the person submitted.  
+
+Some sort of search mechanism for journals to be able to discern the different times they were published on the site and what journal it is. Theoretically just make the entire database be shown in search and filter as the person adds into the bar what they are looking for.  
+
+A formal tab that is dedicated with FAQ on process of how to submit work, ability to ask questions that are not answered, and directions on who to talk to about certain items.  
+
+ … or … Things that other people may need to know about the component  that I am working on  
+
+ Things to Discuss and Capture in Design Documents:  
+
+What are the webpages / views / tabs that the user will see when  interacting with our system  
+
+Front End: We want to have a basic layout of majority of website pages, when going into the website you’ll have these main pages ( Home, About/ faculty, Journal, FAQ, Poster forms, research posts, )  
+
+Home page has a display of newer posts or information about what events are occurring in the Criminology department.  
+
+ 
+
+About Page, Explaining the purpose of this page as a place to present information on the thesis/ projects of the criminology major to be seen past the normal display dates. It will also provide information to major faculty in the department to allow for connection to people running the website/ ideas needed.  
+
+Journal page:  
+
+Be able to see all the previously vetted projects that have accumulated or been recently approved.  
+
+Poster Form/Submission page  
+
+This page will hold the ability to submit the application to have your project on the database, maybe even a step by step guide to allow user ease of use.  
+
+Research Post:  
+
+FAQ:  
+
+Different questions that we think will be common, aka what forms are acceptable for submission, what’s the purpose of the website, How can I apply if I am not a student? 
+
+Login  
+
+We will need different login level’s or privileges to discern from who is a guest, editor or administrator or third party member. This will be associated with different levels of interaction with the website most likely going to separate pages in accordance with it.  
+
+ 
+
+What are the URLs that we use to request web pages or other  resources/services  
+
+ 
+
+When data moves between one component of our system and other  component what is the format of the data, how is it structured  
+
+ 
+
+If a component stores data (i.e., a database), how is that data  organized/structured  
+
+ 
+
+If a component of the system uses multiple files, what is in each file.  (E.g., If you use a general naming scheme for your CSS, JS or HTML  files, specify that naming scheme)  
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+What we Have working by this point.  
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Tabs: 
+
+Home:  
+
+We can maybe link in the about page in here, explaining to people what this page is as an academic journal website.  
+
+Set up hyper quick links to different sections like posting, viewing new articles, have spotlights possibly on what is going on for events in Criminology departments.  
+
+FAQ:  
+
+We need to have elements of questions on what is allowed for logins, what permissions do I have as a guest viewer?,  
+
+How long does the process of editing take?  
+
+A possible submission to one of the Criminology board members via email on questions that are not answered by the pre set list of items.  
+
+Login:  
+
+Administrator  
+
+Be able to mess with everything in terms of code access possibly, widgets on the site. I 
+
+Editor  
+
+Has access to the submitted articles to “edit them” be able to highlight and comment on them to submit for review. (Do we make a copy of the document marked edited/ do we edit original added document?)  
+
+Needs a possible drop menu for submission of edits for further editing needed or given to administrator for final review/ post 
+
+Viewer  
+
+Be able to interact with search features  
+
+Be able to post on the website  
+
+Be able to have a notification system possibly to notify when their posts are commented on or has made past editor.  
+
+Journal Submission:  
+
+Progress bar: The paper has made it to editor, the editor is in process of review, the document requires further edits or is submitted for final approval.  
+
+Need some sort of drop down to mark what type of topic or title to save in database for filtering later/  
+
+ 
+
+Journal Viewing:  
+
+Search bar to be able to filter through all submitted works  
+
+Ability to see who has published what information with contact information linked to the person who posted (email?) 
+
+(Editing Process Tab) 
+
+Needs to be able to see documents added into the database that are not edited or published possibly separate databases here ( non edited documents, edited documents, posted documents)  
+
+We need to decide if we are keeping the same document but allowed to highlight and comment how it will be retrieved fully out of the database or if it is taken out and put back in immediately.  
+
+About Page:  
+
+Have Information about this being an academic journal website, it’s mission to have a record of all the Criminology post of previous students on record to be viewed at relative times  
+
+Have information to contact the heads of the criminology department or about section of them for which branch they need.  
+
+   
