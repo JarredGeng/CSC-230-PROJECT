@@ -48,6 +48,8 @@ A formal tab that is dedicated with FAQ on process of how to submit work, abilit
 
  … or … Things that other people may need to know about the component  that I am working on  
 
+
+
  Things to Discuss and Capture in Design Documents:  
 
 What are the webpages / views / tabs that the user will see when  interacting with our system  
@@ -84,15 +86,18 @@ Front end URLs used for navigating the website, /login, /register etc.
 
 Back end URLs handling the request for user authentication, entry submission, etc.   
 
+
 When data moves between one component of our system and other component what is the format of the data, how is it structured  
 
 The format of the data is JSON for majority communications while SQL is used for database interactions 
+
 
 If a component stores data (i.e., a database), how is that data  organized/structured  
 
 Using SQL our data is going to be structured into tables 
 
 For PDFs they would be stored directly in the database for easy access control 
+
 
 If a component of the system uses multiple files, what is in each file.  (E.g., If you use a general naming scheme for your CSS, JS or HTML  files, specify that naming scheme)  
 

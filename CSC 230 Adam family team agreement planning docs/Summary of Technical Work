@@ -1,0 +1,25 @@
+The Adam Family
+Summary of Technical Work
+
+What we have so far…
+A skeleton/foundation of a website
+- Basic home page layout
+- PDF submission/upload
+- Outline of tabs
+
+Database
+- Using SQL Lite
+
+
+Things to add (currently discussing and will probably add soon)
+Login
+- Login options for student, faculty, guest (students and professors generally have different domains for UT emails anyway)
+
+FAQ/Q&A
+- Thinking of putting a comment bar so that people can ask questions and an admin can respond
+
+Database
+- search bar to look for specific journals/posters (filter results when typed)
+
+Journal
+- option to edit/review documents
