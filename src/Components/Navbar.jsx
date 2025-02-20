@@ -7,7 +7,7 @@ const NavBar = () => {
 
   return (
     <nav className="navbar">
-      <Link to="/" className="logo">CIRT</Link>
+      <Link to="/" className="logo">UT Criminology Institute for Research and Training</Link>
       <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
         ☰
       </button>
@@ -17,7 +17,7 @@ const NavBar = () => {
         <li><Link to="/journal">Journal</Link></li>
         <li><Link to="/resources">Resources</Link></li>
         <li><Link to="/faq">FAQ</Link></li>
-        <li><Link to="/admin">Admin</Link></li>
+        <li><Link to="/admin">Sign in</Link></li>
       </ul>
     </nav>
   );
