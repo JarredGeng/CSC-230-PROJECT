@@ -10,19 +10,22 @@ const ResearchPosters = () => {
       .catch((err) => console.error("Error fetching posters:", err));
   }, []);
 
+  
   return (
     <div className="container">
-      <h1>Research Posters</h1>
-      <ul>
-        {posters.map((poster) => (
-          <li key={poster.id}>
-            <h2>{poster.title}</h2>
+      <h2>Research Posters</h2>
+      {posters.map((poster, index) => (
+          <div key={index} className="poster-item">
+            <h3>{poster.title}</h3>
             <p>{poster.description}</p>
-            <a href={poster.file_path} target="_blank" rel="noopener noreferrer">View Poster</a>
-          </li>
+            {poster.file_url.endsWith(".jpg") || poster.file_url.endsWith(".png") || poster.file_url.endsWith(".jpeg") ? (
+              <img src={poster.file_url} alt={poster.title} className="poster-image" />
+            ) : (
+              <a href={poster.file_url} target="_blank" rel="noopener noreferrer">View File</a>
+            )}
+          </div>
         ))}
-      </ul>
-    </div>
+      </div>
   );
 };
 
