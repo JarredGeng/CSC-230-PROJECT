@@ -9,7 +9,7 @@ from PIL import Image
 import fitz  # PyMuPDF
 import jwt
 
-# --- Load Environment Variables ---
+# --- Load environment variables ---
 load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
@@ -29,12 +29,9 @@ def register():
 
     try:
         res = supabase.auth.sign_up({'email': email, 'password': password})
-
         if res.user is None:
             return jsonify({'error': res.error.message if res.error else 'Unknown error'}), 400
-
         return jsonify({'message': 'User registered successfully'}), 201
-
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -47,7 +44,6 @@ def login():
 
     try:
         res = supabase.auth.sign_in_with_password({'email': email, 'password': password})
-
         if res.user is None:
             return jsonify({'error': res.error.message if res.error else 'Invalid login'}), 401
 
@@ -62,10 +58,8 @@ def login():
         )
 
         return jsonify({'token': token, 'user_id': res.user['id']})
-
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 # --- Upload Poster: File + Metadata ---
 @app.route('/api/posters', methods=['POST'])
@@ -81,6 +75,8 @@ def upload_poster():
     if not title or not description or not user_id:
         return jsonify({"error": "Missing title, description, or user_id"}), 400
 
+    print(f"📥 Uploading poster: {title} from user {user_id}")
+
     file_bytes = file.read()
     file_ext = file.filename.split('.')[-1]
     file_name = f"{title.replace(' ', '_')}_{datetime.datetime.utcnow().timestamp()}.{file_ext}"
@@ -89,7 +85,7 @@ def upload_poster():
     supabase.storage.from_('uploads').upload(file_name, file_bytes)
     file_url = f"{SUPABASE_URL}/storage/v1/object/public/uploads/{file_name}"
 
-    # Try to create a thumbnail if it's a PDF
+    # Generate thumbnail for PDFs
     thumbnail_url = None
     if file.filename.lower().endswith(".pdf"):
         try:
@@ -106,9 +102,9 @@ def upload_poster():
             supabase.storage.from_('uploads').upload(thumb_name, thumb_bytes.read())
             thumbnail_url = f"{SUPABASE_URL}/storage/v1/object/public/uploads/{thumb_name}"
         except Exception as e:
-            print("Thumbnail generation failed:", e)
+            print("⚠️ Thumbnail generation failed:", e)
 
-    # Save metadata to Supabase DB
+    # Save metadata to Supabase
     supabase.table("documents").insert({
         "title": title,
         "description": description,
@@ -123,18 +119,33 @@ def upload_poster():
         "thumbnail_url": thumbnail_url
     }), 201
 
-# --- Get All Documents ---
-@app.route('/api/documents', methods=['GET'])
-def get_documents():
-    res = supabase.table("documents").select("*").order("uploaded_at", desc=True).execute()
-    return jsonify(res.data)
-
+# --- Get All Posters ---
 @app.route('/api/posters', methods=['GET'])
 def get_posters():
     res = supabase.table("documents").select("*").order("uploaded_at", desc=True).execute()
     return jsonify(res.data)
 
+# --- Search Posters (via Supabase) ---
+@app.route('/api/search', methods=['GET'])
+def search():
+    query = request.args.get("query", "").strip()
+    if not query:
+        return jsonify({"error": "Query parameter is required"}), 400
+
+    try:
+        res = supabase.table("documents") \
+            .select("*") \
+            .ilike("title", f"%{query}%") \
+            .execute()
+        results = res.data
+        if results:
+            return jsonify(results)
+        else:
+            return jsonify({"message": "No results found"})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # --- Run Server ---
 if __name__ == "__main__":
+    print("✅ Server is running at http://localhost:5000")
     app.run(debug=True, port=5000)
