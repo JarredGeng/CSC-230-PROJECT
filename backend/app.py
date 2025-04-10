@@ -102,7 +102,7 @@ def upload_poster():
             supabase.storage.from_('uploads').upload(thumb_name, thumb_bytes.read())
             thumbnail_url = f"{SUPABASE_URL}/storage/v1/object/public/uploads/{thumb_name}"
         except Exception as e:
-            print("⚠️ Thumbnail generation failed:", e)
+            print("Thumbnail generation failed:", e)
 
     # Save metadata to Supabase
     supabase.table("documents").insert({
@@ -147,5 +147,5 @@ def search():
 
 # --- Run Server ---
 if __name__ == "__main__":
-    print("✅ Server is running at http://localhost:5000")
+    print("Server is running at http://localhost:5000")
     app.run(debug=True, port=5000)
