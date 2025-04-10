@@ -6,7 +6,7 @@ const PosterForm = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
-  const [posters, setPosters] = useState([]); // Store uploaded posters
+  const [posters, setPosters] = useState([]);
 
   // Fetch existing posters
   useEffect(() => {
@@ -18,10 +18,17 @@ const PosterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const user_id = localStorage.getItem("user_id");
+    if (!user_id) {
+      alert("You must be logged in to submit a poster.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
     formData.append("file", file);
+    formData.append("user_id", user_id);
 
     try {
       const response = await axios.post("http://127.0.0.1:5000/api/posters", formData, {
@@ -32,12 +39,10 @@ const PosterForm = () => {
       setTitle("");
       setDescription("");
       setFile(null);
-
-      // Refresh posters list
-      setPosters([...posters, response.data.poster]);
-
+      setPosters([...posters, response.data.poster]); 
     } catch (error) {
       console.error("Error submitting poster:", error);
+      alert("Upload failed. Please try again.");
     }
   };
 
@@ -47,21 +52,54 @@ const PosterForm = () => {
       <form onSubmit={handleSubmit} className="poster-form">
         <div className="form-group">
           <label>Title:</label>
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
         </div>
 
         <div className="form-group">
           <label>Description:</label>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
         </div>
 
         <div className="form-group">
           <label>Upload File:</label>
-          <input type="file" onChange={(e) => setFile(e.target.files[0])} required />
+          <input
+            type="file"
+            onChange={(e) => setFile(e.target.files[0])}
+            accept=".pdf,.jpg,.jpeg,.png"
+            required
+          />
         </div>
 
         <button type="submit" className="submit-btn">Submit</button>
       </form>
+
+      <div className="poster-list">
+        <h3>Uploaded Posters</h3>
+        {posters.length === 0 && <p>No posters uploaded yet.</p>}
+        {posters.map((poster, index) => (
+          <div key={index} className="poster-item">
+            <h4>{poster.title}</h4>
+            <p>{poster.description}</p>
+            {poster.thumbnail_url && (
+              <img src={poster.thumbnail_url} alt="Poster thumbnail" width={150} />
+            )}
+            <p>
+              <a href={poster.file_url} target="_blank" rel="noopener noreferrer">
+                View Full Poster
+              </a>
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
