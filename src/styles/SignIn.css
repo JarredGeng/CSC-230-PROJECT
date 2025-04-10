@@ -1,85 +1,77 @@
-/* Full-screen background with gradient */
+/* SignIn.css - Matching style to Home and PosterForm */
+
 .signin-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-    background: linear-gradient(135deg, #0f0f0f, #1e1e1e); /* Dark theme */
-    color: white;
-    font-family: "Arial", sans-serif;
-  }
-  
-  /* Glassmorphism effect for the selection box */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+  color: #000;
+}
+
+.signin-box {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  width: 350px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.signin-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.signin-box h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #000;
+}
+
+.signin-box p {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.role-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.role-btn {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background-color: #4b79a1;
+  color: #fff;
+  transition: background-color 0.3s, transform 0.2s;
+  width: 140px;
+}
+
+.role-btn:hover {
+  background-color: #365f82;
+  transform: translateY(-3px);
+}
+
+@media (max-width: 400px) {
   .signin-box {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 40px;
-    border-radius: 15px;
-    backdrop-filter: blur(10px); /* Glass effect */
-    -webkit-backdrop-filter: blur(10px);
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
-    width: 350px;
-    transition: all 0.3s ease-in-out;
+    width: 90%;
+    padding: 30px;
   }
-  
-  .signin-box:hover {
-    transform: scale(1.02); /* Slight zoom effect */
-  }
-  
-  /* Title */
-  h1 {
-    font-size: 28px;
-    margin-bottom: 20px;
-    font-weight: bold;
-  }
-  
-  /* Subtitle */
-  p {
-    font-size: 18px;
-    color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 20px;
-  }
-  
-  /* Button container */
+
   .role-buttons {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    margin-top: 20px;
+    flex-direction: column;
+    gap: 15px;
   }
-  
-  /* Role selection buttons */
-  .role-btn {
-    padding: 12px 24px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    background: red;
-    color: white;
-    transition: 0.3s ease;
-    width: 140px;
-  }
-  
-  .role-btn:hover {
-    background: white;
-    color: red;
-    border: 2px solid red;
-    transform: scale(1.05);
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 400px) {
-    .signin-box {
-      width: 90%;
-    }
-  
-    .role-buttons {
-      flex-direction: column;
-      gap: 10px;
-    }
-  }
-  
+}

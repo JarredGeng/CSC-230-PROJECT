@@ -1,44 +1,72 @@
-.hero {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    background: linear-gradient(to right, black, red);
-    color: white;
-  }
-  
-  .hero-content {
-    max-width: 600px;
-  }
-  
-  .hero h1 {
-    font-size: 3rem;
-    margin-bottom: 10px;
-    color: white;
-  }
-  
-  .hero p {
-    font-size: 1.5rem;
-    color: #ddd;
-    margin-bottom: 20px;
-  }
-  
-  .hero-btn {
-    padding: 12px 24px;
-    font-size: 18px;
-    font-weight: bold;
-    background: red;
-    color: white;
-    border: 2px solid red;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: 0.3s ease-in-out;
-  }
-  
-  .hero-btn:hover {
-    background: white;
-    color: red;
-    border: 2px solid white;
-  }
+/* ResearchPosters.css - Fully white background, no black margins, and pushed down without grid layout */
+
+body {
+  margin-top: 100px;
+  padding: 0;
+  background-color: #ffffff; /* Full white background */
+}
+
+.container {
+  padding: 120px 20px 60px 20px; /* Pushed down more with top padding */
+  background-color: #ffffff; /* Full white background */
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.container h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #000;
+  margin-bottom: 40px;
+}
+
+.poster-item {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  text-align: center;
+  margin: 20px auto;
+  max-width: 600px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.poster-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.poster-item h3 {
+  font-size: 1.4rem;
+  color: #000;
+  margin-bottom: 10px;
+}
+
+.poster-item p {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.poster-image {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.poster-item a {
+  display: inline-block;
+  margin-top: 10px;
+  color: #4b79a1;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.poster-item a:hover {
+  text-decoration: underline;
+}
