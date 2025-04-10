@@ -1,4 +1,5 @@
 import os
+import sqlite3
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
  
@@ -51,5 +52,35 @@ def get_posters():
 def get_uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
+# Function to search the fucking posters 
+def search_posters(query):
+    conn = sqlite3.connect("cirt.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, title, description, file_path
+        FROM posters 
+        WHERE title LIKE ? OR description LIKE ?
+        """, (f"%{query}%", f"%{query}%"))
+    results = cursor.fetchall()
+    conn.close()
+    
+    return [{"id": row[0], "title": row[1], "description": row[2], "file_url": row[3]} for row in results]
+   
+
+@app.route('/api/search', methods=['GET'])
+def search():
+    query = request.args.get("query", "").strip()
+    if not query:
+        return jsonify({"error": "Query parameter is required"}), 400
+    results = search_posters(query)
+
+    if results:
+        return jsonify(results)
+    else:
+        return jsonify({"message": "No results found"})
+   
+
 if __name__ == "__main__":
+    print(app.url_map)
     app.run(debug=True, port=5000)
