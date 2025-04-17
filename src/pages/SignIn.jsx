@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../AuthContext"; // Import AuthContext
+import { AuthContext } from "../AuthContext";
 import "../styles/SignIn.css";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext); // Access login function
+  const { login } = useContext(AuthContext);
 
   const handleRoleSelection = (role) => {
-    login(role); // Save role in context
-    navigate(`/login/${role.toLowerCase()}`);
+    login(role); 
+    navigate("/login"); 
   };
 
   return (

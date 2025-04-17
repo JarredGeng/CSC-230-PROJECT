@@ -1,6 +1,7 @@
 import os
 import datetime
 import io
+import time
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -17,10 +18,11 @@ JWT_SECRET = os.getenv("JWT_SECRET")
 
 # --- Initialize Flask + Supabase ---
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
+
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# --- Auth: Register User ---
+# --- Register User and assign role ---
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.json
@@ -31,11 +33,22 @@ def register():
         res = supabase.auth.sign_up({'email': email, 'password': password})
         if res.user is None:
             return jsonify({'error': res.error.message if res.error else 'Unknown error'}), 400
+
+        time.sleep(0.5) 
+
+        user_id = res.user.id
+
+        supabase.table("profiles").insert({
+            "id": user_id,
+            "role": "student"
+        }).execute()
+
         return jsonify({'message': 'User registered successfully'}), 201
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# --- Auth: Log In User ---
+# --- Login User and return role ---
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.json
@@ -47,9 +60,15 @@ def login():
         if res.user is None:
             return jsonify({'error': res.error.message if res.error else 'Invalid login'}), 401
 
+        user_id = res.user.id
+        email = res.user.email
+
+        role_res = supabase.table("profiles").select("role").eq("id", user_id).single().execute()
+        role = role_res.data['role'] if role_res.data else 'student'
+
         token = jwt.encode(
             {
-                'user_id': res.user['id'],
+                'user_id': user_id,
                 'email': email,
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=2)
             },
@@ -57,9 +76,45 @@ def login():
             algorithm='HS256'
         )
 
-        return jsonify({'token': token, 'user_id': res.user['id']})
+        return jsonify({'token': token, 'user_id': user_id, 'role': role})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# --- Confirm Email via token and return user + role ---
+@app.route('/api/confirm', methods=['POST'])
+def confirm_login():
+    token = request.json.get("token")
+    try:
+        res = supabase.auth.get_user(token)
+        user = res.user
+        if not user:
+            return jsonify({"error": "Invalid or expired token"}), 401
+
+        user_id = user.id
+        email = user.email
+
+        role_res = supabase.table("profiles").select("role").eq("id", user_id).single().execute()
+        role = role_res.data['role'] if role_res.data else 'student'
+
+        jwt_token = jwt.encode(
+            {
+                'user_id': user_id,
+                'email': email,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=2)
+            },
+            JWT_SECRET,
+            algorithm='HS256'
+        )
+
+        return jsonify({
+            "token": jwt_token,
+            "user_id": user_id,
+            "email": email,
+            "role": role
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # --- Upload Poster: File + Metadata ---
 @app.route('/api/posters', methods=['POST'])
@@ -75,17 +130,16 @@ def upload_poster():
     if not title or not description or not user_id:
         return jsonify({"error": "Missing title, description, or user_id"}), 400
 
-    print(f"📥 Uploading poster: {title} from user {user_id}")
+    print(f"Uploading poster: {title} from user {user_id}")
 
     file_bytes = file.read()
     file_ext = file.filename.split('.')[-1]
     file_name = f"{title.replace(' ', '_')}_{datetime.datetime.utcnow().timestamp()}.{file_ext}"
 
-    # Upload file to Supabase Storage
-    supabase.storage.from_('uploads').upload(file_name, file_bytes)
+    supabase.storage.from_('uploads').upload(file_name, file_bytes, {"content-type": file.content_type})
+
     file_url = f"{SUPABASE_URL}/storage/v1/object/public/uploads/{file_name}"
 
-    # Generate thumbnail for PDFs
     thumbnail_url = None
     if file.filename.lower().endswith(".pdf"):
         try:
@@ -104,7 +158,6 @@ def upload_poster():
         except Exception as e:
             print("Thumbnail generation failed:", e)
 
-    # Save metadata to Supabase
     supabase.table("documents").insert({
         "title": title,
         "description": description,
@@ -125,7 +178,7 @@ def get_posters():
     res = supabase.table("documents").select("*").order("uploaded_at", desc=True).execute()
     return jsonify(res.data)
 
-# --- Search Posters (via Supabase) ---
+# --- Search Posters ---
 @app.route('/api/search', methods=['GET'])
 def search():
     query = request.args.get("query", "").strip()
@@ -138,14 +191,20 @@ def search():
             .ilike("title", f"%{query}%") \
             .execute()
         results = res.data
-        if results:
-            return jsonify(results)
-        else:
-            return jsonify({"message": "No results found"})
+        return jsonify(results) if results else jsonify({"message": "No results found"})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "http://localhost:5173"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
+    return response
+
 
 # --- Run Server ---
 if __name__ == "__main__":
-    print("Server is running at http://localhost:5000")
+    print("Server running at http://localhost:5000")
     app.run(debug=True, port=5000)
