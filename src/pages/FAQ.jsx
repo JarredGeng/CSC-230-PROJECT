@@ -54,6 +54,11 @@ const FAQ = () => {
           <p>Contact: cirt@ut.edu | (813) 555-1234</p>
         </footer>
       </div>
+
+      <footer className="footer">
+        <p>© 2025 CIRT - Criminology Institute for Research & Training | University of Tampa</p>
+        <p>Contact: cirt@ut.edu | (813) 555-1234</p>
+      </footer>
     </div>
   );
 };
