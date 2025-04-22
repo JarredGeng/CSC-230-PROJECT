@@ -82,3 +82,19 @@ button:hover {
     padding: 30px;
   }
 }
+.login-container p {
+  font-size: 0.85rem;
+  margin-top: 10px;
+  color: #333;
+}
+
+.login-container p button {
+  background: none;
+  border: none;
+  color: #4b79a1;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  font-size: 0.85rem;
+}

@@ -1,24 +1,122 @@
 import os
-import sqlite3
-from flask import Flask, request, jsonify, send_from_directory
-from flask_cors import CORS
-import fitz  # PyMuPDF
-from PIL import Image
+import datetime
 import io
+import time
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from dotenv import load_dotenv
+from supabase import create_client, Client
+from PIL import Image
+import fitz  # PyMuPDF
+import jwt
 
+# --- Load environment variables ---
+load_dotenv()
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+JWT_SECRET = os.getenv("JWT_SECRET")
+
+# --- Initialize Flask + Supabase ---
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
 
-# Set up folders for uploads and thumbnails
-UPLOAD_FOLDER = "uploads"
-THUMBNAIL_FOLDER = "thumbnails"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(THUMBNAIL_FOLDER, exist_ok=True)
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Store posters in memory (replace with a database in production)
-posters = []
+# --- Register User and assign role ---
+@app.route('/api/register', methods=['POST'])
+def register():
+    data = request.json
+    email = data['email']
+    password = data['password']
 
+    try:
+        res = supabase.auth.sign_up({'email': email, 'password': password})
+        if res.user is None:
+            return jsonify({'error': res.error.message if res.error else 'Unknown error'}), 400
+
+        time.sleep(0.5) 
+
+        user_id = res.user.id
+
+        supabase.table("profiles").insert({
+            "id": user_id,
+            "role": "student"
+        }).execute()
+
+        return jsonify({'message': 'User registered successfully'}), 201
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# --- Login User and return role ---
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.json
+    email = data['email']
+    password = data['password']
+
+    try:
+        res = supabase.auth.sign_in_with_password({'email': email, 'password': password})
+        if res.user is None:
+            return jsonify({'error': res.error.message if res.error else 'Invalid login'}), 401
+
+        user_id = res.user.id
+        email = res.user.email
+
+        role_res = supabase.table("profiles").select("role").eq("id", user_id).single().execute()
+        role = role_res.data['role'] if role_res.data else 'student'
+
+        token = jwt.encode(
+            {
+                'user_id': user_id,
+                'email': email,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=2)
+            },
+            JWT_SECRET,
+            algorithm='HS256'
+        )
+
+        return jsonify({'token': token, 'user_id': user_id, 'role': role})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# --- Confirm Email via token and return user + role ---
+@app.route('/api/confirm', methods=['POST'])
+def confirm_login():
+    token = request.json.get("token")
+    try:
+        res = supabase.auth.get_user(token)
+        user = res.user
+        if not user:
+            return jsonify({"error": "Invalid or expired token"}), 401
+
+        user_id = user.id
+        email = user.email
+
+        role_res = supabase.table("profiles").select("role").eq("id", user_id).single().execute()
+        role = role_res.data['role'] if role_res.data else 'student'
+
+        jwt_token = jwt.encode(
+            {
+                'user_id': user_id,
+                'email': email,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=2)
+            },
+            JWT_SECRET,
+            algorithm='HS256'
+        )
+
+        return jsonify({
+            "token": jwt_token,
+            "user_id": user_id,
+            "email": email,
+            "role": role
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# --- Upload Poster: File + Metadata ---
 @app.route('/api/posters', methods=['POST'])
 def upload_poster():
     if "file" not in request.files:
@@ -27,92 +125,87 @@ def upload_poster():
     file = request.files["file"]
     title = request.form.get("title", "").strip()
     description = request.form.get("description", "").strip()
+    user_id = request.form.get("user_id", "").strip()
 
-    if not title or not description:
-        return jsonify({"error": "Title and description are required"}), 400
+    if not title or not description or not user_id:
+        return jsonify({"error": "Missing title, description, or user_id"}), 400
 
-    if file.filename == "":
-        return jsonify({"error": "No file selected"}), 400
+    print(f"Uploading poster: {title} from user {user_id}")
 
-    # Save the uploaded file
-    file_path = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
-    file.save(file_path)
-    file_url = f"http://127.0.0.1:5000/uploads/{file.filename}"  # Public file URL
+    file_bytes = file.read()
+    file_ext = file.filename.split('.')[-1]
+    file_name = f"{title.replace(' ', '_')}_{datetime.datetime.utcnow().timestamp()}.{file_ext}"
 
-    poster = {
-        "title": title,
-        "description": description,
-        "file_url": file_url
-    }
+    supabase.storage.from_('uploads').upload(file_name, file_bytes, {"content-type": file.content_type})
 
-    # If the file is a PDF, generate a thumbnail using PyMuPDF and Pillow
+    file_url = f"{SUPABASE_URL}/storage/v1/object/public/uploads/{file_name}"
+
+    thumbnail_url = None
     if file.filename.lower().endswith(".pdf"):
         try:
-            doc = fitz.open(file_path)
-            page = doc.load_page(0)  # Load first page
+            doc = fitz.open(stream=file_bytes, filetype="pdf")
+            page = doc.load_page(0)
             pix = page.get_pixmap()
             img_data = pix.tobytes("png")
             image = Image.open(io.BytesIO(img_data))
-            # Resize to a uniform thumbnail size (200x300)
             image = image.resize((200, 300))
-            thumbnail_filename = file.filename + ".png"  # e.g., "document.pdf.png"
-            thumbnail_path = os.path.join(THUMBNAIL_FOLDER, thumbnail_filename)
-            image.save(thumbnail_path, "PNG")
-            thumbnail_url = f"http://127.0.0.1:5000/thumbnails/{thumbnail_filename}"
-            poster["thumbnail_url"] = thumbnail_url
+            thumb_name = file_name + ".png"
+            thumb_bytes = io.BytesIO()
+            image.save(thumb_bytes, format="PNG")
+            thumb_bytes.seek(0)
+            supabase.storage.from_('uploads').upload(thumb_name, thumb_bytes.read())
+            thumbnail_url = f"{SUPABASE_URL}/storage/v1/object/public/uploads/{thumb_name}"
         except Exception as e:
-            print("Error generating thumbnail:", e)
+            print("Thumbnail generation failed:", e)
 
-    posters.append(poster)
+    supabase.table("documents").insert({
+        "title": title,
+        "description": description,
+        "file_url": file_url,
+        "thumbnail_url": thumbnail_url,
+        "user_id": user_id
+    }).execute()
 
     return jsonify({
-        "message": "Poster uploaded successfully!",
-        "poster": poster
+        "message": "Uploaded successfully",
+        "file_url": file_url,
+        "thumbnail_url": thumbnail_url
     }), 201
 
+# --- Get All Posters ---
 @app.route('/api/posters', methods=['GET'])
 def get_posters():
-    """Return all uploaded posters"""
-    return jsonify(posters)
+    res = supabase.table("documents").select("*").order("uploaded_at", desc=True).execute()
+    return jsonify(res.data)
 
-# Serve uploaded files
-@app.route('/uploads/<filename>')
-def get_uploaded_file(filename):
-    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
-
-# Serve thumbnail files
-@app.route('/thumbnails/<filename>')
-def get_thumbnail_file(filename):
-    return send_from_directory(THUMBNAIL_FOLDER, filename)
-
-# Stoping Sql bombing 
-def is_valid_search_query(query):
-    # Check if the query contains only valid characters (alphanumeric and spaces)
-    return bool(re.match(r'^[a-zA-Z0-9\s]+$', query))
-
-
-# Function to search the fucking posters 
-def search_posters(query):
-    conn = sqlite3.connect("cirt.db")
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT id, title, description, file_path
-        FROM posters 
-        WHERE title LIKE ? OR description LIKE ?
-        """, (f"%{query}%", f"%{query}%"))
-    results = cursor.fetchall()
-    conn.close()
-    
-    return [{"id": row[0], "title": row[1], "description": row[2], "file_url": row[3]} for row in results]
-   
-
+# --- Search Posters ---
 @app.route('/api/search', methods=['GET'])
 def search():
     query = request.args.get("query", "").strip()
 
     if not query:
         return jsonify({"error": "Query parameter is required"}), 400
+
+    try:
+        res = supabase.table("documents") \
+            .select("*") \
+            .ilike("title", f"%{query}%") \
+            .execute()
+        results = res.data
+        return jsonify(results) if results else jsonify({"message": "No results found"})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "http://localhost:5173"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
+    return response
+
+
+# --- Run Server ---
 
     if not is_valid_search_query(query):
         app.logger.warning(f"Suspicious query blocked: {query}")

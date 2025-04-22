@@ -2,15 +2,21 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "../styles/ResearchPosters.css"; // Make sure CSS is imported here
+import { useNavigate } from "react-router-dom";
+import "../styles/ResearchPosters.css";
 import SearchBar from "../Components/SearchBar.jsx"; 
 import "../styles/Searchbar.css"; // Import the CSS for the SearchBar  
 
 
 const ResearchPosters = () => {
   const [posters, setPosters] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    axios
+      .get("http://127.0.0.1:5000/api/posters")
+      .then((res) => setPosters(res.data))
+      .catch((err) => console.error("Error fetching posters:", err));
     fetchPosters(); 
   }, []);
 
@@ -25,6 +31,10 @@ const ResearchPosters = () => {
 
   const handleSearch = (resultd) => {
     setPosters(resultd); // Update posters with search results
+  };
+
+  const openInJournal = (index) => {
+    navigate(`/journal/${index}`);
   };
 
   return (
