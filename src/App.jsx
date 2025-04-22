@@ -1,5 +1,11 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+
 import NavBar from "./Components/Navbar";
 import Hero from "./Components/Hero";
 import RedirectAfterConfirm from './Components/RedirectAfterConfirm';
@@ -16,11 +22,19 @@ import Login from "./pages/Login";
 import StudentDashboard from './pages/studentdash';
 import AdminDashboard from './pages/admindash';
 
-const App = () => {
+const AppContent = () => {
+  const location = useLocation();
+  const hideNavbarRoutes = [
+    '/studentdash',
+    '/studentdash/posterform',
+    '/studentdash/inreview',
+    '/admindash'
+  ];
+
   return (
-    <Router>
+    <>
       <RedirectAfterConfirm />
-      <NavBar />
+      {!hideNavbarRoutes.includes(location.pathname) && <NavBar />}
       <Routes>
         <Route path="/" element={<><Hero /><Home /></>} />
         <Route path="/posters" element={<ResearchPosters />} />
@@ -30,9 +44,22 @@ const App = () => {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/admin" element={<SignIn />} />
         <Route path="/login" element={<Login />} />
+
+        {/* Student Dashboard routes */}
         <Route path="/studentdash" element={<StudentDashboard />} />
+        <Route path="/studentdash/posterform" element={<StudentDashboard />} />
+        <Route path="/studentdash/inreview" element={<StudentDashboard />} />
+
         <Route path="/admindash" element={<AdminDashboard />} />
       </Routes>
+    </>
+  );
+};
+
+const App = () => {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 };

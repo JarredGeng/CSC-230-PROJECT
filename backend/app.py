@@ -28,25 +28,28 @@ def register():
     data = request.json
     email = data['email']
     password = data['password']
+    name = data.get('name', '').strip()
 
     try:
         res = supabase.auth.sign_up({'email': email, 'password': password})
         if res.user is None:
             return jsonify({'error': res.error.message if res.error else 'Unknown error'}), 400
 
-        time.sleep(0.5) 
+        time.sleep(0.5)
 
         user_id = res.user.id
 
         supabase.table("profiles").insert({
             "id": user_id,
-            "role": "student"
+            "role": "student",
+            "name": name
         }).execute()
 
         return jsonify({'message': 'User registered successfully'}), 201
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 # --- Login User and return role ---
 @app.route('/api/login', methods=['POST'])
@@ -63,8 +66,10 @@ def login():
         user_id = res.user.id
         email = res.user.email
 
-        role_res = supabase.table("profiles").select("role").eq("id", user_id).single().execute()
-        role = role_res.data['role'] if role_res.data else 'student'
+        # Get role and name from profiles table
+        profile_res = supabase.table("profiles").select("role", "name").eq("id", user_id).single().execute()
+        role = profile_res.data['role'] if profile_res.data else 'student'
+        name = profile_res.data['name'] if profile_res.data else 'User'
 
         token = jwt.encode(
             {
@@ -76,9 +81,15 @@ def login():
             algorithm='HS256'
         )
 
-        return jsonify({'token': token, 'user_id': user_id, 'role': role})
+        return jsonify({
+            'token': token,
+            'user_id': user_id,
+            'role': role,
+            'name': name
+        })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 # --- Confirm Email via token and return user + role ---
 @app.route('/api/confirm', methods=['POST'])
@@ -203,6 +214,36 @@ def add_cors_headers(response):
     response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
     return response
 
+
+@app.route('/api/comments/<int:poster_id>', methods=['GET'])
+def get_comments(poster_id):
+    try:
+        res = supabase.rpc("get_comments_with_name", {"poster_id_input": poster_id}).execute()
+        return jsonify(res.data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+# --- Post a Comment ---
+@app.route('/api/comments/<int:poster_id>', methods=['POST'])
+def post_comment(poster_id):
+    data = request.get_json()
+    content = data.get("content", "").strip()
+    user_id = data.get("user_id", "").strip()
+
+    if not content or not user_id:
+        return jsonify({"error": "Missing content or user ID"}), 400
+
+    try:
+        supabase.table("comments").insert({
+            "poster_id": poster_id,
+            "content": content,
+            "user_id": user_id
+        }).execute()
+        return jsonify({"message": "Comment added successfully"}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # --- Run Server ---
 if __name__ == "__main__":
