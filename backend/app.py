@@ -2,14 +2,18 @@ import os
 import sqlite3
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import re  # for validation in searching 
- 
+import fitz  # PyMuPDF
+from PIL import Image
+import io
+
 app = Flask(__name__)
 CORS(app)
 
-# Set up upload folder
+# Set up folders for uploads and thumbnails
 UPLOAD_FOLDER = "uploads"
+THUMBNAIL_FOLDER = "thumbnails"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(THUMBNAIL_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # Store posters in memory (replace with a database in production)
@@ -30,12 +34,35 @@ def upload_poster():
     if file.filename == "":
         return jsonify({"error": "No file selected"}), 400
 
-    # Save the file
+    # Save the uploaded file
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
     file.save(file_path)
     file_url = f"http://127.0.0.1:5000/uploads/{file.filename}"  # Public file URL
 
-    poster = {"title": title, "description": description, "file_url": file_url}
+    poster = {
+        "title": title,
+        "description": description,
+        "file_url": file_url
+    }
+
+    # If the file is a PDF, generate a thumbnail using PyMuPDF and Pillow
+    if file.filename.lower().endswith(".pdf"):
+        try:
+            doc = fitz.open(file_path)
+            page = doc.load_page(0)  # Load first page
+            pix = page.get_pixmap()
+            img_data = pix.tobytes("png")
+            image = Image.open(io.BytesIO(img_data))
+            # Resize to a uniform thumbnail size (200x300)
+            image = image.resize((200, 300))
+            thumbnail_filename = file.filename + ".png"  # e.g., "document.pdf.png"
+            thumbnail_path = os.path.join(THUMBNAIL_FOLDER, thumbnail_filename)
+            image.save(thumbnail_path, "PNG")
+            thumbnail_url = f"http://127.0.0.1:5000/thumbnails/{thumbnail_filename}"
+            poster["thumbnail_url"] = thumbnail_url
+        except Exception as e:
+            print("Error generating thumbnail:", e)
+
     posters.append(poster)
 
     return jsonify({
@@ -53,6 +80,10 @@ def get_posters():
 def get_uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
+# Serve thumbnail files
+@app.route('/thumbnails/<filename>')
+def get_thumbnail_file(filename):
+    return send_from_directory(THUMBNAIL_FOLDER, filename)
 
 # Stoping Sql bombing 
 def is_valid_search_query(query):
@@ -92,5 +123,4 @@ def search():
     return jsonify(results) if results else jsonify({"message": "No results found"})
 
 if __name__ == "__main__":
-    print(app.url_map)
     app.run(debug=True, port=5000)
