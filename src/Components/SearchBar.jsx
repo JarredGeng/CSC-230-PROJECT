@@ -30,8 +30,8 @@ function SearchBar({ onSearch }) {
     };
 
     return (
-        <div className="search-container">
-            <input 
+        <div className="search-container" style={{ border: '2px solid red' }}>
+    //**          <input 
                 type="text" 
                 placeholder="Search Posters..." 
                 value={query} 
@@ -41,6 +41,6 @@ function SearchBar({ onSearch }) {
         </div>
     );
 }
-    
+    //**     */
 
 export default SearchBar;

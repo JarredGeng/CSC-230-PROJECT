@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/ResearchPosters.css"; // Make sure CSS is imported here
 import SearchBar from "../Components/SearchBar.jsx"; 
-import ".. /styles/Searchbar.css"; // Import the CSS for the SearchBar  
+import "../styles/Searchbar.css"; // Import the CSS for the SearchBar  
 
 
 const ResearchPosters = () => {
@@ -30,11 +30,12 @@ const ResearchPosters = () => {
   return (
     <div className="container" style={{ backgroundColor: '#f9f9f9', padding: '60px 20px' }}>
       <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: '#000', marginBottom: '20px' }}>
-        Research Posters
+        Research Posters !!
       </h2>
 
       {/* 🔍 Reusable Search Component */}
-      <SearchBar onSearch={handleSearchResults} />
+      <p>SearchBar should be right below <p> </p></p>
+      <SearchBar onSearch={handleSearch} />
 
       <div className="posters-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '25px', maxWidth: '1200px', margin: '0 auto' }}>
         {posters.length > 0 ? (
