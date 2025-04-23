@@ -30,6 +30,7 @@ const ResearchPosters = () => {
   };
 
   const handleSearch = (resultd) => {
+    console.log("Search results:", resultd); // Shit your looking for logged in
     setPosters(resultd); // Update posters with search results
   };
 
@@ -41,6 +42,9 @@ const ResearchPosters = () => {
     <div className="page-wrapper">
       <div className="container" style={{ backgroundColor: '#f9f9f9', padding: '60px 20px' }}>
         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: '#000', marginBottom: '40px' }}>Research Posters</h2>
+        <div style={{ marginBottom: '30px', maxWidth: '500px', margin: '0 auto' }}>
+          <SearchBar onSearch={handleSearch} onClear={fetchPosters} /> {/* Using handle in Searchbar here !! */}  
+        </div>
         <div className="posters-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '25px', maxWidth: '1200px', margin: '0 auto' }}>
           {posters.map((poster) => (
             <div

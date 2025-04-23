@@ -13,34 +13,40 @@ function SearchBar({ onSearch }) {
     const handleSearch = async () => {
         if (!query.trim()) return;
 
-        try {
-            const response = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
-            const data = await response.json();
+        console.log("Searching for Fuckers:", query);
 
-            // Call the parent function with results
-            if (Array.isArray(data)) {
-                onSearch(data);
-            } else {
-                onSearch([]); // No results found
-            }
+        try {
+            const response = await fetch(`http://localhost:5000/api/search?query=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            console.log("What your looking for :", data);
+            Array.isArray(data) ? onSearch(data) : onSearch([]);
         } catch (error) {
             console.error("Error fetching search results", error);
-            onSearch([]); // Handle errors by showing no results
+            onSearch([]);
         }
     };
 
+           
+           
+
+    const handleClear = () => {
+        setQuery('');
+        onClear(); // Clear search results in parent component
+    }
+
     return (
-        <div className="search-container" style={{ border: '2px solid red' }}>
-    //**          <input 
+        <div className="search-container" style={{ border: '2px solid white' }}>
+              <input 
                 type="text" 
                 placeholder="Search Posters..." 
                 value={query} 
                 onChange={(e) => setQuery(e.target.value)} 
             />
             <button onClick={handleSearch}>Search</button>
+            <button onClick={handleClear} style= {{marginLeft: '10px'}}>Clear</button>
         </div>
     );
 }
-    //**     */
+    
 
 export default SearchBar;

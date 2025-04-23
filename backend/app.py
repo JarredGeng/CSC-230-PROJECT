@@ -202,8 +202,8 @@ def search():
             .select("*") \
             .ilike("title", f"%{query}%") \
             .execute()
-        results = res.data
-        return jsonify(results) if results else jsonify({"message": "No results found"})
+        results = res.data or []
+        return jsonify(results) 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
