@@ -28,3 +28,18 @@
     margin: 0 auto;
     padding: 20px;
   }
+
+  html, body, #root {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100%;
+  }
+  .page-wrapper {
+    padding-top: 100px; /* accounts for navbar height */
+    padding-left: 40px;
+    padding-right: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  

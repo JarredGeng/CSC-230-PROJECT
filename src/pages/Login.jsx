@@ -9,6 +9,7 @@ const API = "http://localhost:5000/api";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [isLogin, setIsLogin] = useState(true);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -16,26 +17,32 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!isLogin && !name.trim()) {
+      alert("Please enter your name.");
+      return;
+    }
+
+    const payload = isLogin
+      ? { email, password }
+      : { email, password, name };
+
     const endpoint = isLogin ? "login" : "register";
 
     try {
-      const res = await axios.post(`${API}/${endpoint}`, { email, password });
+      const res = await axios.post(`${API}/${endpoint}`, payload);
 
       if (isLogin) {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user_id", res.data.user_id);
         localStorage.setItem("role", res.data.role);
+        localStorage.setItem("name", res.data.name); // For navbar dropdown
 
-        login(res.data.role);
-
-        if (res.data.role === "admin") {
-          navigate("/admindash");
-        } else {
-          navigate("/studentdash");
-        }
+        login(res.data.role); // Optional if you're using AuthContext
+        navigate("/"); // ✅ Home, not dashboard
       } else {
         alert("Registered! Please log in.");
         setIsLogin(true);
+        setName("");
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -48,6 +55,15 @@ const Login = () => {
       <div className="login-container">
         <h1>{isLogin ? "Login" : "Register"}</h1>
         <form onSubmit={handleSubmit}>
+          {!isLogin && (
+            <input
+              type="text"
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          )}
           <input
             type="email"
             placeholder="Email"

@@ -81,25 +81,6 @@ const PosterForm = () => {
 
         <button type="submit" className="submit-btn">Submit</button>
       </form>
-
-      <div className="poster-list">
-        <h3>Uploaded Posters</h3>
-        {posters.length === 0 && <p>No posters uploaded yet.</p>}
-        {posters.map((poster, index) => (
-          <div key={index} className="poster-item">
-            <h4>{poster.title}</h4>
-            <p>{poster.description}</p>
-            {poster.thumbnail_url && (
-              <img src={poster.thumbnail_url} alt="Poster thumbnail" width={150} />
-            )}
-            <p>
-              <a href={poster.file_url} target="_blank" rel="noopener noreferrer">
-                View Full Poster
-              </a>
-            </p>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
