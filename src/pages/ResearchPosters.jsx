@@ -12,13 +12,9 @@ const ResearchPosters = () => {
   const [posters, setPosters] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    axios
-      .get("http://127.0.0.1:5000/api/posters")
-      .then((res) => setPosters(res.data))
-      .catch((err) => console.error("Error fetching posters:", err));
-    fetchPosters(); 
-  }, []);
+
+  
+
 
   const fetchPosters = async () => {
     try {
@@ -27,7 +23,21 @@ const ResearchPosters = () => {
     } catch (error) {
       console.error("Error fetching posters:", error);
     }
+  }; 
+
+  const handleClear = () => {
+    fetchPosters(); // Fetch all posters when clearing the search
   };
+
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:5000/api/posters")
+      .then((res) => setPosters(res.data))
+      .catch((err) => console.error("Error fetching posters:", err));
+    fetchPosters(); 
+  }, []);
+
+  
 
   const handleSearch = (resultd) => {
     console.log("Search results:", resultd); // Shit your looking for logged in
@@ -43,7 +53,7 @@ const ResearchPosters = () => {
       <div className="container" style={{ backgroundColor: '#f9f9f9', padding: '60px 20px' }}>
         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: '#000', marginBottom: '40px' }}>Research Posters</h2>
         <div style={{ marginBottom: '30px', maxWidth: '500px', margin: '0 auto' }}>
-          <SearchBar onSearch={handleSearch} onClear={fetchPosters} /> {/* Using handle in Searchbar here !! */}  
+          <SearchBar onSearch={handleSearch} onClear={handleClear} /> {/* Using handle in Searchbar here !! */}  
         </div>
         <div className="posters-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '25px', maxWidth: '1200px', margin: '0 auto' }}>
           {posters.map((poster) => (

@@ -1,14 +1,22 @@
 // SearchBar.jsx
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import "../styles/Searchbar.css";
 
 
 
 
-function SearchBar({ onSearch }) {
+function SearchBar({ onSearch, onClear }) {
     console.log( " SearchBar component loaded" );
     const [query, setQuery] = useState('');
+
+    useEffect(() => {
+        if (query === '') {
+            if (onClear) onClear(); // Clear search results in parent component
+            }
+        }, [query, onClear]);
+
+
 
     const handleSearch = async () => {
         if (!query.trim()) return;
@@ -18,10 +26,18 @@ function SearchBar({ onSearch }) {
         try {
             const response = await fetch(`http://localhost:5000/api/search?query=${encodeURIComponent(query)}`);
             const data = await response.json();
+           
             console.log("What your looking for :", data);
-            Array.isArray(data) ? onSearch(data) : onSearch([]);
+
+
+           if(Array.isArray(data)) {
+                onSearch(data); // Pass search results to parent component
+            }
+            else {
+                onSearch([]); // Pass empty array if no results found
+            }
         } catch (error) {
-            console.error("Error fetching search results", error);
+            console.error("Error searching posters:", error);
             onSearch([]);
         }
     };
@@ -29,10 +45,7 @@ function SearchBar({ onSearch }) {
            
            
 
-    const handleClear = () => {
-        setQuery('');
-        onClear(); // Clear search results in parent component
-    }
+  
 
     return (
         <div className="search-container" style={{ border: '2px solid white' }}>
@@ -43,7 +56,6 @@ function SearchBar({ onSearch }) {
                 onChange={(e) => setQuery(e.target.value)} 
             />
             <button onClick={handleSearch}>Search</button>
-            <button onClick={handleClear} style= {{marginLeft: '10px'}}>Clear</button>
         </div>
     );
 }
