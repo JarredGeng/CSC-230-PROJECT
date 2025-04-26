@@ -1,7 +1,7 @@
 import React from "react";
 import "../styles/Home.css";
 import { Link } from "react-router-dom";
-
+import Carosel from "../Components/Carosel.jsx"; // Import the Carosel component
 const Home = () => {
   return (
     <div className="home-page">
@@ -11,6 +11,11 @@ const Home = () => {
           <p>Your hub for research, training, and student engagement.</p>
         </div>
       </section>
+
+      <section className="Carosel-section" style={{ padding: '40px 0', backgroundColor: '#f0f0f0' }}>
+      <Carosel /> {/* Include the Carosel component here */}  
+      </section>
+
 
       <section className="quick-links">
         <h2>Quick Links</h2>
