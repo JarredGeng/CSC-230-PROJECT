@@ -1,12 +1,37 @@
-import Sidebar from '../Components/sidebar';
+import React from "react";
+import Sidebar from "../Components/sidebar";
+// import ReviewQueue from "./ReviewQueue";
+// import PosterEditor from "./PosterEditor";
+// import FinalizeReview from "./FinalizeReview";
+import { useLocation } from "react-router-dom";
+import "../styles/dashboard.css";
 
 const AdminDashboard = () => {
-  return (
-    <div style={{ display: 'flex' }}>
-      <Sidebar role="admin" />
-      <div style={{ marginLeft: '220px', padding: '20px', flex: 1 }}>
+  const location = useLocation();
+  const path = location.pathname;
+
+  let content;
+
+  if (path === "/admindash/reviewqueue") {
+    content = <ReviewQueue />;
+  } else if (path === "/admindash/editor") {
+    content = <PosterEditor />;
+  } else if (path === "/admindash/finalize") {
+    content = <FinalizeReview />;
+  } else {
+    content = (
+      <>
         <h1>Welcome to the Admin Dashboard 🛠️</h1>
-        <p>You can manage users, review posters, and more.</p>
+        <p>Review, edit, and publish student posters from here.</p>
+      </>
+    );
+  }
+
+  return (
+    <div className="dashboard-page">
+      <Sidebar role="admin" />
+      <div className="dashboard-content">
+        {content}
       </div>
     </div>
   );

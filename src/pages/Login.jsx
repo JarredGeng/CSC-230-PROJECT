@@ -35,10 +35,9 @@ const Login = () => {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user_id", res.data.user_id);
         localStorage.setItem("role", res.data.role);
-        localStorage.setItem("name", res.data.name); // For navbar dropdown
-
-        login(res.data.role); // Optional if you're using AuthContext
-        navigate("/"); // ✅ Home, not dashboard
+        localStorage.setItem("name", res.data.name);
+        login(res.data.role);
+        navigate("/"); 
       } else {
         alert("Registered! Please log in.");
         setIsLogin(true);

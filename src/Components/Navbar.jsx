@@ -33,7 +33,6 @@ const NavBar = () => {
       </Link>
       <ul className="nav-links">
         <li><Link to="/posters">Research Posters</Link></li>
-        <li><Link to="/journal">Journal</Link></li>
         <li><Link to="/resources">Resources</Link></li>
         <li><Link to="/faq">FAQ</Link></li>
 
