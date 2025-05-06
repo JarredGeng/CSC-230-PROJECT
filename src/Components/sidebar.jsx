@@ -7,9 +7,16 @@ const Sidebar = ({ role }) => {
       <nav>
         <ul>
           <li><Link to="/">Home</Link></li>
-          <li><Link to="/studentdash/posterform">Submit Poster</Link></li>
-          <li><Link to="/studentdash/inreview">In Review</Link></li>
-          {role === 'admin' && <li><Link to="/manage-users">Manage Users</Link></li>}
+          {role === 'student' && <>
+            <li><Link to="/studentdash/posterform">Submit Poster</Link></li>
+            <li><Link to="/studentdash/inreview">In Review</Link></li>
+          </>}
+          {role === 'admin' && <>
+            <li><Link to="/admindash/reviewqueue">Review Queue</Link></li>
+            <li><Link to="/admindash/editor">Editor</Link></li>
+            <li><Link to="/admindash/finalize">Finalize</Link></li>
+            <li><Link to="/manage-users">Manage Users</Link></li>
+          </>}
         </ul>
       </nav>
     </div>

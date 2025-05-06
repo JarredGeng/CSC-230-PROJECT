@@ -1,8 +1,8 @@
 import React from "react";
 import Sidebar from "../Components/sidebar";
-// import ReviewQueue from "./ReviewQueue";
-// import PosterEditor from "./PosterEditor";
-// import FinalizeReview from "./FinalizeReview";
+import ReviewQueue from "./review";
+import PosterEditor from "./PosterEditor";
+import FinalizeReview from "./FinalizeReview";
 import { useLocation } from "react-router-dom";
 import "../styles/dashboard.css";
 
@@ -38,3 +38,5 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
+import { Link } from "react-router-dom";

@@ -245,6 +245,28 @@ def post_comment(poster_id):
         return jsonify({"message": "Comment added successfully"}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+    # --- Update Poster Status ---
+@app.route('/api/posters/<int:poster_id>/status', methods=['PATCH'])
+def update_poster_status(poster_id):
+    data = request.get_json()
+    new_status = data.get("status", "").strip()
+
+    valid_statuses = ["submitted", "needs_edits", "resubmitted", "approved"]
+    if new_status not in valid_statuses:
+        return jsonify({"error": f"Invalid status. Must be one of: {valid_statuses}"}), 400
+
+    try:
+        supabase.table("documents") \
+            .update({"status": new_status}) \
+            .eq("id", poster_id) \
+            .execute()
+
+        return jsonify({"message": f"Poster status updated to '{new_status}'"}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 # --- Run Server ---
 
