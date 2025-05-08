@@ -10,7 +10,15 @@ const FAQ = () => {
         <div className="faq-item">
           <h3 className="faq-question">What is CIRT?</h3>
           <p className="faq-answer">
-          We are the Criminology Institute for Research and Training (CIRT) at the University of Tampa, a dynamic hub established in 2023 with a mission to foster academic excellence, promote interdisciplinary research, and support the professional growth of students, faculty and criminal justice professionals pursuing careers in criminology and criminal justice.
+          We are the Criminology Institute for Research and Training (CIRT), a dynamic hub housed in the College of Social Sciences, Mathematics and Education (CSSME) and linked to the Department of Criminology and Criminal Justice at the University of Tampa. Established in 2023, we aim to become a catalyst and leader in criminal justice research both locally and nationally by fostering academic excellence, promoting interdisciplinary research, and supporting the professional growth of students, faculty, and criminal justice professionals pursuing careers in criminology and criminal justice. 
+          </p>
+        </div>
+
+        <div className="faq-item">
+          <h3 className="faq-question">What opportunities are there for those involved with CIRT?</h3>
+          <p className="faq-answer">
+          CIRT offers a wide range of opportunities to support students as they prepare for careers in the field of criminal justice. Training sessions encourage students to attain practical skills and insights into real-world challenges faced by law enforcement professionals, corrections and legal systems. Students are also encouraged to engage in faculty-led and independent research projects, helping them sharpen critical skills such as data collection, analysis, and academic writing. By participating in symposia, publishing in the CIRT Journal, or collaborating on grant-funded projects, students can build strong resumes and portfolios. CIRT houses events such as through guest lectures, workshops, and collaborative initiatives, facilitating networking with criminal justice professionals and agencies . These connections provide mentorship opportunities and can lead to internships or employment for students. 
+
           </p>
         </div>
 
@@ -49,12 +57,12 @@ const FAQ = () => {
           </p>
         </div>
 
-        <footer className="footer">
-          <p>© 2025 CIRT - Criminology Institute for Research & Training | University of Tampa</p>
-          <p>Contact: cirt@ut.edu | (813) 555-1234</p>
-        </footer>
-      </div>
+    <footer className="footer">
+      <p>© 2025 CIRT - Criminology Institute for Research & Training | University of Tampa</p>
+      <p>Contact: cirt@ut.edu | (813) 555-1234</p>
+    </footer>
     </div>
+  </div>
   );
 };
 
