@@ -1,0 +1,67 @@
+.review-queue {
+    padding: 2rem;
+    max-width: 1000px;
+    margin: auto;
+    font-family: sans-serif;
+  }
+  
+  .review-queue h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .poster-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease;
+  }
+  
+  .poster-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  .poster-card h3 {
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .poster-card p {
+    color: #555;
+  }
+  
+  .poster-card .button-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .poster-card button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.2s ease;
+  }
+  
+  .poster-card button:hover {
+    opacity: 0.9;
+  }
+  
+  .poster-card .review-btn {
+    background-color: #007bff;
+  }
+  
+  .poster-card .edit-btn {
+    background-color: #ffc107;
+    color: black;
+  }
+  
+  .poster-card .approve-btn {
+    background-color: #28a745;
+  }
+      

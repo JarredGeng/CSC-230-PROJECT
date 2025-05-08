@@ -18,7 +18,8 @@ JWT_SECRET = os.getenv("JWT_SECRET")
 
 # --- Initialize Flask + Supabase ---
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
+CORS(app, supports_credentials=True, origins="*")
+
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
@@ -49,6 +50,40 @@ def register():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# --- Manage Users API ---
+
+@app.route("/api/users", methods=["GET"])
+def list_users():
+    try:
+        res = supabase.table("profiles").select("*").execute()
+        return jsonify(res.data)
+    except Exception as e:
+        print("Error fetching users:", e)
+        return jsonify({"error": str(e)}), 500
+
+
+# Change role
+@app.route("/api/users/<uuid:user_id>/role", methods=["PATCH"])
+def change_role(user_id):
+    new_role = request.json["role"]
+    supabase.table("profiles").update({"role": new_role}).eq("id", str(user_id)).execute()
+    return jsonify(success=True)
+
+# Toggle active
+@app.route("/api/users/<uuid:user_id>/toggle", methods=["PATCH"])
+def toggle_active(user_id):
+    user = supabase.table("profiles").select("is_active").eq("id", str(user_id)).single().execute().data
+    new_status = not user["is_active"]
+    supabase.table("profiles").update({"is_active": new_status}).eq("id", str(user_id)).execute()
+    return jsonify(success=True)
+
+# Delete user
+@app.route("/api/users/<uuid:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    supabase.table("profiles").delete().eq("id", str(user_id)).execute()
+    return jsonify(success=True)
+
 
 
 # --- Login User and return role ---
@@ -183,11 +218,29 @@ def upload_poster():
         "thumbnail_url": thumbnail_url
     }), 201
 
-# --- Get All Posters ---
+# --- Get All Posters (with optional status filter) ---
 @app.route('/api/posters', methods=['GET'])
 def get_posters():
-    res = supabase.table("documents").select("*").order("uploaded_at", desc=True).execute()
+    status = request.args.get("status")
+
+    query = supabase.table("documents").select("*").order("uploaded_at", desc=True)
+    if status:
+        query = query.eq("status", status)
+
+    res = query.execute()
     return jsonify(res.data)
+
+# --- Get Poster by ID ---
+@app.route('/api/posters/<int:poster_id>', methods=['GET'])
+def get_poster(poster_id):
+    try:
+        res = supabase.table("documents").select("*").eq("id", poster_id).single().execute()
+        if res.data:
+            return jsonify(res.data)
+        else:
+            return jsonify({"error": "Poster not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # --- Search Posters ---
 @app.route('/api/search', methods=['GET'])
@@ -206,15 +259,13 @@ def search():
         return jsonify(results) 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
 
 @app.after_request
 def add_cors_headers(response):
-    response.headers["Access-Control-Allow-Origin"] = "http://localhost:5173"
+    response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
-    response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
+    response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS,PATCH"
     return response
-
 
 @app.route('/api/comments/<int:poster_id>', methods=['GET'])
 def get_comments(poster_id):
@@ -223,8 +274,6 @@ def get_comments(poster_id):
         return jsonify(res.data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
 
 # --- Post a Comment ---
 @app.route('/api/comments/<int:poster_id>', methods=['POST'])
@@ -245,38 +294,31 @@ def post_comment(poster_id):
         return jsonify({"message": "Comment added successfully"}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
 
-    # --- Update Poster Status ---
+# --- Update Poster Status ---
 @app.route('/api/posters/<int:poster_id>/status', methods=['PATCH'])
 def update_poster_status(poster_id):
     data = request.get_json()
     new_status = data.get("status", "").strip()
+    reviewer_id = data.get("reviewer_id", "").strip()
 
     valid_statuses = ["submitted", "needs_edits", "resubmitted", "approved"]
     if new_status not in valid_statuses:
         return jsonify({"error": f"Invalid status. Must be one of: {valid_statuses}"}), 400
 
+    update_fields = {"status": new_status}
+    if reviewer_id:
+        update_fields["reviewer_id"] = reviewer_id
+
     try:
         supabase.table("documents") \
-            .update({"status": new_status}) \
+            .update(update_fields) \
             .eq("id", poster_id) \
             .execute()
 
         return jsonify({"message": f"Poster status updated to '{new_status}'"}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
-# --- Run Server ---
-
-    if not is_valid_search_query(query):
-        app.logger.warning(f"Suspicious query blocked: {query}")
-        return jsonify({"error": "Invalid search query"}), 400
-
-    results = search_posters(query)
-
-    return jsonify(results) if results else jsonify({"message": "No results found"})
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

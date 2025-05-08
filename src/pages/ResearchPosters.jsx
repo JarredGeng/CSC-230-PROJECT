@@ -30,12 +30,11 @@ const ResearchPosters = () => {
   };
 
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:5000/api/posters")
-      .then((res) => setPosters(res.data))
-      .catch((err) => console.error("Error fetching posters:", err));
-    fetchPosters(); 
+    fetch("http://localhost:5000/api/posters?status=approved")
+      .then(res => res.json())
+      .then(data => setPosters(data));
   }, []);
+  
 
   
 

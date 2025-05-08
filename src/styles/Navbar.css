@@ -10,13 +10,13 @@
   align-items: center;
   padding: 15px 20px;
   z-index: 1000;
-  border-bottom: 3px solid rgb(3, 3, 3);
+  border-bottom: 3px solid #990000; /* deep UT red */
 }
 
 .logo {
   font-size: 30px;
   font-weight: bold;
-  color: rgb(234, 227, 227);
+  color: #d4af37; /* gold accent */
   text-decoration: none;
 }
 
@@ -32,11 +32,12 @@
   color: white;
   font-size: 18px;
   font-weight: bold;
-  transition: color 0.3s;
+  transition: all 0.2s ease-in-out;
 }
 
 .nav-links a:hover {
-  color: red;
+  color: #d4af37; /* gold on hover */
+  text-decoration: underline;
 }
 
 .user-dropdown {
@@ -58,7 +59,7 @@
 }
 
 .dropdown-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .dropdown-menu {
@@ -87,7 +88,7 @@
 
 .dropdown-menu li:hover {
   background: #333;
-  color: red;
+  color: #d4af37;
 }
 
 .logout {
@@ -105,7 +106,6 @@
   }
 }
 
-/* Hamburger menu — hidden for now, add logic if needed */
 .hamburger {
   display: none;
 }

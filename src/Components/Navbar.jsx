@@ -29,10 +29,10 @@ const NavBar = () => {
   return (
     <nav className="navbar">
       <Link to="/" className="logo">
-        UT Criminology Institute for Research and Training
+        <span style={{ color: "#d4af37", fontWeight: "bold" }}>UT</span> Criminology Institute for Research and Training
       </Link>
       <ul className="nav-links">
-        <li><Link to="/posters">Research Posters</Link></li>
+        <li><Link to="/posters">Posters</Link></li>
         <li><Link to="/resources">Resources</Link></li>
         <li><Link to="/faq">FAQ</Link></li>
 

@@ -1,0 +1,84 @@
+.resources-page {
+    background-color: white;
+    padding: 100px 40px;
+    color: black;
+    font-family: "Lato", sans-serif;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  
+  .resources-page h1 {
+    text-align: center;
+    margin-bottom: 60px;
+    font-size: 2.8rem;
+    color: black;
+  }
+  
+  .featured-video {
+    text-align: center;
+    margin: 40px 0;
+  }
+  
+  .featured-video h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: #990000; /* UT red */
+  }
+  
+  .faculty-section {
+    margin-top: 80px;
+  }
+  
+  .faculty-section h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    text-align: center;
+    color: black;
+  }
+  
+  .faculty-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+  }
+  
+  .faculty-card {
+    width: 250px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: #f9f9f9;
+  }
+  
+  .faculty-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .faculty-card h4 {
+    margin: 10px 0 5px;
+    font-size: 1.2rem;
+    color: #222;
+  }
+  
+  .faculty-card p {
+    font-size: 0.95rem;
+    color: #444;
+    margin-bottom: 8px;
+  }
+  
+  .faculty-card a {
+    color: #0066cc;
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+  
+  .faculty-card a:hover {
+    text-decoration: underline;
+  }
+  

@@ -1,45 +1,96 @@
-/* Reset & Global Styles */
+/* === Reset & Base Styles === */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Arial", sans-serif;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Arial", sans-serif;
+}
 
-  body {
-    background: white; /* Black background */
-    color: black; /* White text */
-  }
+html, body, #root {
+  height: 100%;
+  background-color: white;
+  color: #111;
+}
 
-  /* Red accents for links & buttons */
-  a {
-    color: red;
-    text-decoration: none;
-    transition: 0.3s ease-in-out;
-  }
+/* === Typography === */
+body {
+  line-height: 1.6;
+}
 
-  a:hover {
-    color: white;
-  }
+h1, h2, h3, h4, h5, h6 {
+  color: #990000; /* UT Red */
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
 
-  /* Container styles */
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
+/* === Links === */
+a {
+  color: #990000;
+  text-decoration: none;
+  transition: 0.3s ease-in-out;
+}
 
-  html, body, #root {
-    margin: 0 !important;
-    padding: 0 !important;
-    height: 100%;
-  }
-  .page-wrapper {
-    padding-top: 100px; /* accounts for navbar height */
-    padding-left: 40px;
-    padding-right: 40px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
+a:hover {
+  color: black;
+}
+
+/* === Layout Containers === */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.page-wrapper {
+  padding-top: 100px; /* for navbar */
+  padding-left: 40px;
+  padding-right: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* === Buttons === */
+button {
+  background-color: #990000;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #b30000;
+}
+
+/* === Utility Classes === */
+.gold-accent {
+  color: #d4af37;
+  font-weight: bold;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-2 { margin-top: 2rem; }
+.mb-2 { margin-bottom: 2rem; }
+
+/* === Footer === */
+footer {
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+body {
+  background-color: #f9f9f9; /* soft off-white */
+  color: #000;
+  font-family: 'Lato', sans-serif;
+  margin: 0;
+  padding: 0;
+}
   

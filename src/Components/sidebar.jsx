@@ -13,9 +13,7 @@ const Sidebar = ({ role }) => {
           </>}
           {role === 'admin' && <>
             <li><Link to="/admindash/reviewqueue">Review Queue</Link></li>
-            <li><Link to="/admindash/editor">Editor</Link></li>
-            <li><Link to="/admindash/finalize">Finalize</Link></li>
-            <li><Link to="/manage-users">Manage Users</Link></li>
+            <li><Link to="/admindash/manage-users">Manage Users</Link></li>
           </>}
         </ul>
       </nav>
